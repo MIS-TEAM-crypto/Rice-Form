@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sales Entry Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#c8a96e;--dark:#1a1a2e;--darker:#0f0f1a;--card:#1e1e35;--border:#2e2e50;--text:#e8e8f0;--muted:#8888aa;--success:#4caf7d;--error:#e05c5c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--darker);color:var(--text);min-height:100vh;background-image:radial-gradient(ellipse at 20% 20%,rgba(200,169,110,0.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(100,80,160,0.07) 0%,transparent 50%);}
+.page-wrapper{max-width:860px;margin:0 auto;padding:40px 20px 60px;}
+.header{text-align:center;margin-bottom:40px;}
+.header::before{content:'';display:block;width:60px;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 20px;}
+.header h1{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--gold);letter-spacing:0.02em;}
+.header p{color:var(--muted);font-size:0.9rem;margin-top:8px;font-weight:300;letter-spacing:0.05em;text-transform:uppercase;}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;box-shadow:0 24px 80px rgba(0,0,0,0.4);}
+.section-label{font-family:'Playfair Display',serif;font-size:0.8rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.grid.three{grid-template-columns:1fr 1fr 1fr;}
+.grid.full{grid-template-columns:1fr;}
+.field{display:flex;flex-direction:column;gap:7px;}
+label{font-size:0.78rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+label span.req{color:var(--gold);margin-left:3px;}
+input,select,textarea{background:var(--darker);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.92rem;padding:11px 14px;transition:border-color 0.2s,box-shadow 0.2s;outline:none;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,169,110,0.1);}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238888aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer;}
+select option{background:var(--darker);color:var(--text);}
+textarea{resize:vertical;min-height:90px;line-height:1.6;}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5) sepia(1) saturate(2) hue-rotate(5deg);cursor:pointer;opacity:0.7;}
+.divider{border:none;border-top:1px solid var(--border);margin:28px 0;}
+.submit-area{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.toast{font-size:0.85rem;padding:10px 16px;border-radius:8px;font-weight:500;flex:1;min-width:200px;display:none;align-items:center;gap:8px;}
+.toast.success{background:rgba(76,175,125,0.15);border:1px solid rgba(76,175,125,0.3);color:var(--success);display:flex;}
+.toast.error{background:rgba(224,92,92,0.15);border:1px solid rgba(224,92,92,0.3);color:var(--error);display:flex;}
+button[type="submit"]{background:linear-gradient(135deg,var(--gold) 0%,#a0823a 100%);color:#1a1200;border:none;border-radius:10px;padding:13px 36px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;transition:transform 0.15s,box-shadow 0.15s;white-space:nowrap;box-shadow:0 4px 20px rgba(200,169,110,0.25);}
+button[type="submit"]:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(200,169,110,0.35);}
+button[type="submit"]:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(26,18,0,0.3);border-top-color:#1a1200;border-radius:50%;animation:spin 0.6s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* Documentation section highlight */
+.section-label.doc{color:#a78bfa;}
+.form-card .doc-section{background:rgba(167,139,250,0.04);border:1px solid rgba(167,139,250,0.12);border-radius:12px;padding:24px;margin-bottom:0;}
+.doc-section .section-label.doc{border-bottom-color:rgba(167,139,250,0.2);}
+.doc-section input:focus,.doc-section select:focus,.doc-section textarea:focus{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,0.1);}
+@media(max-width:640px){.grid{grid-template-columns:1fr;}.grid.three{grid-template-columns:1fr;}.form-card{padding:24px 20px;}.header h1{font-size:1.6rem;}.submit-area{flex-direction:column;}button[type="submit"]{width:100%;}}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="header">
+    <h1>Sales Entry</h1>
+    <p>Client Engagement &amp; Demand Tracking</p>
+  </div>
+  <div class="form-card">
+    <form id="salesForm">
+
+      <!-- ── BASIC INFO ── -->
+      <div class="section-label">Basic Info</div>
+      <div class="grid">
+        <div class="field">
+          <label>Sales POC <span class="req">*</span></label>
+          <select id="salesPOC" required><option value="" disabled selected>Loading…</option></select>
+        </div>
+        <div class="field">
+          <label>Date <span class="req">*</span></label>
+          <input type="date" id="date" required/>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label>Client Name <span class="req">*</span></label>
+          <input type="text" id="clientName" placeholder="Enter client name" required/>
+        </div>
+        <div class="field">
+          <label>Client Type</label>
+          <input type="text" id="clientType" placeholder="e.g. Distributor, Retailer"/>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- ── MARKET DETAILS ── -->
+      <div class="section-label">Market Details</div>
+      <div class="grid">
+        <div class="field">
+          <label>Market Segment</label>
+          <input type="text" id="marketSegment" placeholder="e.g. Wholesale, Retail"/>
+        </div>
+        <div class="field">
+          <label>Region</label>
+          <input type="text" id="region" placeholder="e.g. North, South, East"/>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label>Rice Variety</label>
+          <input type="text" id="riceVariety" placeholder="e.g. Basmati, Sona Masoori"/>
+        </div>
+        <div class="field">
+          <label>Demand Qty (MT)</label>
+          <input type="number" id="demandQty" placeholder="0.00" step="0.01" min="0"/>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label>Demand Fulfillment Qty (MT)</label>
+          <input type="number" id="demandFulfillmentQty" placeholder="0.00" step="0.01" min="0"/>
+        </div>
+        <div class="field"><!-- spacer --></div>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- ── FOLLOW-UP & CONTACT ── -->
+      <div class="section-label">Follow-Up &amp; Contact</div>
+      <div class="grid three">
+        <div class="field">
+          <label>Fulfillment Date</label>
+          <input type="date" id="fulfillmentDate"/>
+        </div>
+        <div class="field">
+          <label>Next Follow Up Date</label>
+          <input type="date" id="nextFollowUp"/>
+        </div>
+        <div class="field">
+          <label>Last Contact Date</label>
+          <input type="date" id="lastContact"/>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- ── REMARKS & FEEDBACK ── -->
+      <div class="section-label">Remarks &amp; Feedback</div>
+      <div class="grid full">
+        <div class="field">
+          <label>Discussion Remarks</label>
+          <textarea id="remarks" placeholder="Notes from the discussion…"></textarea>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <label>Hemraj Product Feedback</label>
+          <input type="text" id="hemrajProduct" placeholder="Hemraj product feedback…"/>
+        </div>
+        <div class="field">
+          <label>Feedback</label>
+          <input type="text" id="feedback" placeholder="Feedback"/>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- ── FULL DOCUMENTATION ── -->
+      <div class="doc-section">
+        <div class="section-label doc">Full Documentation</div>
+
+        <div class="grid">
+          <div class="field">
+            <label>Payment In</label>
+            <select id="paymentIn">
+              <option value="" disabled selected>Select payment type</option>
+              <option value="Advance">Advance</option>
+              <option value="Credit">Credit</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Aadhaar</label>
+            <select id="aadhaar">
+              <option value="" disabled selected>Select status</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label>PAN</label>
+            <select id="pan">
+              <option value="" disabled selected>Select status</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Address Proof</label>
+            <select id="addressProof">
+              <option value="" disabled selected>Select status</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label>Photo</label>
+            <select id="photo">
+              <option value="" disabled selected>Select status</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Written Agreement</label>
+            <select id="writtenAgreement">
+              <option value="" disabled selected>Select status</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid full">
+          <div class="field">
+            <label>Party Visit</label>
+            <input type="text" id="partyVisit" placeholder="Brief note about the party visit…"/>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+
+      <div class="submit-area">
+        <div class="toast" id="toast"></div>
+        <button type="submit" id="submitBtn">Submit Entry</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Set today's date
+  document.getElementById("date").valueAsDate = new Date();
+
+  // Load POC names from Doer sheet via Apps Script
+  google.script.run
+    .withSuccessHandler(function(names) {
+      const select = document.getElementById("salesPOC");
+      select.innerHTML = '<option value="" disabled selected>Select Sales POC</option>';
+      names.forEach(function(name) {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        select.appendChild(opt);
+      });
+    })
+    .withFailureHandler(function(err) {
+      document.getElementById("salesPOC").innerHTML = '<option value="" disabled selected>Failed to load</option>';
+    })
+    .getSalesPOC();
+
+  function showToast(message, type) {
+    const toast = document.getElementById("toast");
+    toast.textContent = (type === "success" ? "✓  " : "✕  ") + message;
+    toast.className = "toast " + type;
+    setTimeout(function() { toast.className = "toast"; toast.textContent = ""; }, 5000);
+  }
+
+  document.getElementById("salesForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Submitting…';
+
+    const data = {
+      salesPOC:              document.getElementById("salesPOC").value,
+      date:                  document.getElementById("date").value,
+      clientName:            document.getElementById("clientName").value,
+      clientType:            document.getElementById("clientType").value,
+      marketSegment:         document.getElementById("marketSegment").value,
+      region:                document.getElementById("region").value,
+      riceVariety:           document.getElementById("riceVariety").value,
+      demandQty:             document.getElementById("demandQty").value,
+      demandFulfillmentQty:  document.getElementById("demandFulfillmentQty").value,
+      fulfillmentDate:       document.getElementById("fulfillmentDate").value,
+      nextFollowUp:          document.getElementById("nextFollowUp").value,
+      lastContact:           document.getElementById("lastContact").value,
+      remarks:               document.getElementById("remarks").value,
+      hemrajProduct:         document.getElementById("hemrajProduct").value,
+      feedback:              document.getElementById("feedback").value,
+      // Full Documentation
+      paymentIn:             document.getElementById("paymentIn").value,
+      aadhaar:               document.getElementById("aadhaar").value,
+      pan:                   document.getElementById("pan").value,
+      addressProof:          document.getElementById("addressProof").value,
+      photo:                 document.getElementById("photo").value,
+      writtenAgreement:      document.getElementById("writtenAgreement").value,
+      partyVisit:            document.getElementById("partyVisit").value
+    };
+
+    google.script.run
+      .withSuccessHandler(function(result) {
+        showToast("Entry saved to Google Sheet!", "success");
+        document.getElementById("salesForm").reset();
+        document.getElementById("date").valueAsDate = new Date();
+        btn.disabled = false;
+        btn.innerHTML = "Submit Entry";
+      })
+      .withFailureHandler(function(err) {
+        showToast("Error: " + err.message, "error");
+        btn.disabled = false;
+        btn.innerHTML = "Submit Entry";
+      })
+      .submitForm(data);
+  });
+</script>
+</body>
+</html>
